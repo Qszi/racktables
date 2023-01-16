@@ -1134,6 +1134,8 @@ function renderEditObjectForm()
 	echo "<tr><td>&nbsp;</td><th class=tdright>Common name:</th><td class=tdleft><input type=text name=object_name value='${object['name']}'></td></tr>\n";
 	echo "<tr><td>&nbsp;</td><th class=tdright>Visible label:</th><td class=tdleft><input type=text name=object_label value='${object['label']}'></td></tr>\n";
 	echo "<tr><td>&nbsp;</td><th class=tdright>Asset tag:</th><td class=tdleft><input type=text name=object_asset_no value='${object['asset_no']}'></td></tr>\n";
+    echo "<tr><td>&nbsp;</td><th class=tdright>Serial number:</th><td class=tdleft><input type=text name=object_serial_no value='${object['serial_no']}'></td></tr>\n";
+    echo "<tr><td>&nbsp;</td><th class=tdright>CI:</th><td class=tdleft><input type=text name=object_ci_id value='${object['ci_id']}'></td></tr>\n";
 	echo "<tr><td>&nbsp;</td><th class=tdright>Tags:</th><td class=tdleft>";
 	printTagsPicker ();
 	echo "</td></tr>\n";
@@ -1208,9 +1210,13 @@ function renderEditRackForm ($rack_id)
 	natcasesort ($rows);
 	printSelect ($rows, array ('name' => 'row_id'), $rack['row_id']);
 	echo "</td></tr>\n";
+	echo "<tr><td>&nbsp;</td><th class=tdright>Position:</th><td class=tdleft><input type=text name=position value='${rack['position']}'></td></tr>\n";
 	echo "<tr><td>&nbsp;</td><th class=tdright>Name (required):</th><td class=tdleft><input type=text name=name value='${rack['name']}'></td></tr>\n";
 	echo "<tr><td>&nbsp;</td><th class=tdright>Height (required):</th><td class=tdleft><input type=text name=height value='${rack['height']}'></td></tr>\n";
 	echo "<tr><td>&nbsp;</td><th class=tdright>Asset tag:</th><td class=tdleft><input type=text name=asset_no value='${rack['asset_no']}'></td></tr>\n";
+	echo "<tr><td>&nbsp;</td><th class=tdright>Serial number:</th><td class=tdleft><input type=text name=serial_no value='${rack['serial_no']}'></td></tr>\n";
+	echo "<tr><td>&nbsp;</td><th class=tdright>Position:</th><td class=tdleft><input type=text name=ci_id value='${rack['ci_id']}'></td></tr>\n";
+	echo "<tr><td>&nbsp;</td><th class=tdright>CI:</th><td class=tdleft><input type=text name=ci_id value='${rack['ci_id']}'></td></tr>\n";
 	echo "<tr><td>&nbsp;</td><th class=tdright>Tags:</th><td class=tdleft>";
 	printTagsPicker ();
 	echo "</td></tr>\n";
@@ -1278,10 +1284,16 @@ function renderRackInfoPortlet ($rackData)
 {
 	$summary = array();
 	$summary['Rack row'] = mkA ($rackData['row_name'], 'row', $rackData['row_id']);
+	if ($rackData['position'] != '')
+		$summary['Position'] = $rackData['position'];
 	$summary['Name'] = $rackData['name'];
 	$summary['Height'] = $rackData['height'];
 	if ($rackData['asset_no'] != '')
 		$summary['Asset tag'] = $rackData['asset_no'];
+	if ($rackData['serial_no'] != '')
+		$summary['Serial number'] = $rackData['serial_no'];
+	if ($rackData['ci_id'] != '')
+		$summary['CI'] = $rackData['ci_id'];
 	if ($rackData['has_problems'] == 'yes')
 		$summary[] = array ('<tr><td colspan=2 class=msg_error>Has problems</td></tr>');
 	populateRackPower ($rackData, $summary);
@@ -1427,6 +1439,8 @@ function renderObject ($object_id)
 		$summary['Asset tag'] = $info['asset_no'];
 	elseif (considerConfiguredConstraint ($info, 'ASSETWARN_LISTSRC'))
 		$summary[] = array ('<tr><td colspan=2 class=msg_error>Asset tag is missing.</td></tr>');
+	$summary['Serial number'] = $info['serial_no'];
+	$summary['CI'] = $info['ci_id'];
 	$parents = getParents ($info, 'object');
 	// lookup the human-readable object type, sort by it
 	foreach ($parents as $parent_id => $parent)
@@ -2448,7 +2462,7 @@ function renderObjectHistory ($object_id)
 {
 	$result = usePreparedSelectBlade
 	(
-		'SELECT ctime, user_name, name, label, asset_no, has_problems, comment FROM ObjectHistory WHERE id=? ORDER BY ctime',
+		'SELECT ctime, user_name, name, label, asset_no, serial_no, ci_id,has_problems, comment FROM ObjectHistory WHERE id=? ORDER BY ctime',
 		array ($object_id)
 	);
 	$columns = array
@@ -2458,6 +2472,8 @@ function renderObjectHistory ($object_id)
 		array ('th_text' => 'Name', 'row_key' => 'name'),
 		array ('th_text' => 'Visible label', 'row_key' => 'label'),
 		array ('th_text' => 'Asset tag', 'row_key' => 'asset_no'),
+		array ('th_text' => 'Serial number', 'row_key' => 'serial_no'),
+		array ('th_text' => 'CI', 'row_key' => 'ci_id'),
 		array ('th_text' => 'Has problems?', 'row_key' => 'has_problems'),
 		array ('th_text' => 'Comment', 'row_key' => 'comment'),
 	);
@@ -3611,6 +3627,8 @@ function renderAddMultipleObjectsForm ()
 		echo "<td><input type=text size=30 name=${i}_object_name></td>";
 		echo "<td><input type=text size=30 name=${i}_object_label></td>";
 		echo "<td><input type=text size=20 name=${i}_object_asset_no></td>";
+		echo "<td><input type=text size=20 name=${i}_object_serial_no></td>";
+		echo "<td><input type=text size=20 name=${i}_object_ci_id></td>";
 		if ($i == 0)
 		{
 			echo "<td valign=top rowspan=${max}>";
