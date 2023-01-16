@@ -20,6 +20,8 @@ $SQLSchema = array
 			'id' => 'id',
 			'name' => 'name',
 			'label' => 'label',
+			'serial_no' => 'serial_no',
+			'ci_id' => 'ci_id',
 			'asset_no' => 'asset_no',
 			'objtype_id' => 'objtype_id',
 			'rack_id' => '(SELECT MIN(rack_id) FROM RackSpace WHERE object_id = RackObject.id)',
