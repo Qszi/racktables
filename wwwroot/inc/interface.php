@@ -892,6 +892,11 @@ function printObjectDetailsForRenderRack ($object_id, $hl_obj_id = 0)
 		$suffix = sprintf(", contains %s'>", implode(', ', $childNames));
 	}
 	echo "${prefix}${body}${suffix}" . mkCellA ($objectData) . '</div>';
+	if ($objectData['label']<>"")
+		echo mkA ($objectData['label'] . " (" . $objectData['dname'].")", 'object', $objectData['id']);
+	else
+		echo mkA ($objectData['dname'], 'object', $objectData['id']);
+    echo '</div>';
 	if (in_array ($objectData['objtype_id'], array (1502,1503))) // server chassis, network chassis
 	{
 		$objAttr = getAttrValues ($objectData['id']);
