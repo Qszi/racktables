@@ -948,7 +948,7 @@ function checkObjectNameUniqueness ($name, $type_id, $object_id = 0)
 		throw new InvalidRequestArgException ('name', $name, 'An object with that name already exists');
 }
 
-function commitAddObject ($new_name, $new_label, $new_type_id, $new_asset_no, $taglist = array())
+function commitAddObject ($new_name, $new_label, $new_type_id, $new_asset_no, $new_serial_no, $new_ci_id, $taglist = array())
 {
 	checkObjectNameUniqueness ($new_name, $new_type_id);
 	usePreparedInsertBlade
@@ -960,6 +960,8 @@ function commitAddObject ($new_name, $new_label, $new_type_id, $new_asset_no, $t
 			'label' => nullIfEmptyStr ($new_label),
 			'objtype_id' => $new_type_id,
 			'asset_no' => nullIfEmptyStr ($new_asset_no),
+			'serial_no' => nullIfEmptyStr ($new_serial_no),
+			'cd_id' => nullIfEmptyStr ($new_cd_id),
 		)
 	);
 	$object_id = lastInsertID();
@@ -1007,7 +1009,7 @@ function commitRenameObject ($object_id, $new_name)
 	recordObjectHistory ($object_id);
 }
 
-function commitUpdateObject ($object_id, $new_name, $new_label, $new_has_problems, $new_asset_no, $new_comment)
+function commitUpdateObject ($object_id, $new_name, $new_label, $new_has_problems, $new_serial_no, $new_cd_id, $new_asset_no, $new_comment)
 {
 	$set_columns = array
 	(
@@ -1016,6 +1018,8 @@ function commitUpdateObject ($object_id, $new_name, $new_label, $new_has_problem
 		'has_problems' => $new_has_problems == '' ? 'no' : $new_has_problems,
 		'asset_no' => nullIfEmptyStr ($new_asset_no),
 		'comment' => nullIfEmptyStr ($new_comment),
+		'serial_no' => nullIfEmptyStr ($new_serial_no),
+		'cd_id' => nullIfEmptyStr ($new_cd_id),
 	);
 	$override = callHook('commitUpdateObjectBefore_hook', $object_id, $set_columns);
 	if (is_array ($override))
