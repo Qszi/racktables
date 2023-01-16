@@ -1364,7 +1364,7 @@ WHERE O.objtype_id = 1562";
   LEFT JOIN `Object` L ON EL.parent_entity_id = L.id AND L.objtype_id = 1562
   WHERE O.objtype_id = 1561";
 
-		$query[] = "CREATE VIEW `Rack` AS SELECT O.id, O.name AS name, O.asset_no, O.has_problems, O.comment,
+		$query[] = "CREATE VIEW `Rack` AS SELECT O.id, O.name AS name, O.asset_no, O.has_problems, O.comment, O.serial_no, O.position, O.ci_id,
   AV_H.uint_value AS height,
   AV_S.uint_value AS sort_order,
   RT.thumb_data,
@@ -1382,7 +1382,7 @@ WHERE O.objtype_id = 1562";
   LEFT JOIN `Object` L ON L.id = LL.parent_entity_id
   WHERE O.objtype_id = 1560";
 
-		$query[] = "CREATE VIEW `RackObject` AS SELECT id, name, label, objtype_id, asset_no, has_problems, comment FROM `Object`
+		$query[] = "CREATE VIEW `RackObject` AS SELECT id, name, label, objtype_id, asset_no, serial_no, ci_id, has_problems, comment FROM `Object`
  WHERE `objtype_id` NOT IN (1560, 1561, 1562)";
 
 		$query[] = "SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS";
