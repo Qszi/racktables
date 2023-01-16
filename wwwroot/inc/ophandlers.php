@@ -1295,6 +1295,8 @@ function updateObject ()
 	genericAssertion ('object_label', 'string0');
 	genericAssertion ('object_asset_no', 'string0');
 	genericAssertion ('object_comment', 'string0');
+	genericAssertion ('object_serial_no', 'string0');
+    genericAssertion ('object_ci_id', 'string0');
 	$object_type_id = genericAssertion ('object_type_id', 'natural');
 	$object_id = getBypassValue();
 
@@ -1307,6 +1309,8 @@ function updateObject ()
 		$_REQUEST['object_label'],
 		isCheckSet ('object_has_problems', 'yesno'),
 		$_REQUEST['object_asset_no'],
+		$_REQUEST['object_serial_no'],
+		$_REQUEST['object_ci_id'],
 		$_REQUEST['object_comment']
 	);
 	updateObjectAttributes ($object_id);
@@ -1408,6 +1412,8 @@ function addMultipleObjects()
 		assertStringArg ("${i}_object_name", TRUE);
 		assertStringArg ("${i}_object_label", TRUE);
 		assertStringArg ("${i}_object_asset_no", TRUE);
+		assertStringArg ("${i}_object_serial_no", TRUE);
+		assertStringArg ("${i}_object_ci_id", TRUE);
 		$name = $_REQUEST["${i}_object_name"];
 
 		if ($tid == 0)
@@ -1420,6 +1426,8 @@ function addMultipleObjects()
 				$_REQUEST["${i}_object_label"],
 				$tid,
 				$_REQUEST["${i}_object_asset_no"],
+				$_REQUEST["${i}_object_serial_no"],
+				$_REQUEST["${i}_object_ci_id"],
 				$taglist
 			);
 			showSuccess ('added object ' . mkCellA (spotEntity ('object', $object_id)));
@@ -2382,6 +2390,8 @@ function updateRack ()
 	assertStringArg ('name');
 	$height = genericAssertion ('height', 'natural');
 	assertStringArg ('asset_no', TRUE);
+	assertStringArg ('serial_no', TRUE);
+	assertStringArg ('ci_id', TRUE);
 	assertStringArg ('comment', TRUE);
 	$taglist = genericAssertion ('taglist', 'array0');
 	$rack_id = getBypassValue();
@@ -2394,7 +2404,10 @@ function updateRack ()
 		$height,
 		isCheckSet ('has_problems', 'yesno'),
 		$_REQUEST['asset_no'],
-		$_REQUEST['comment']
+		$_REQUEST['serial_no'],
+		$_REQUEST['comment'],
+		$_REQUEST['position'],
+		$_REQUEST['ci_id']
 	);
 	updateObjectAttributes ($rack_id);
 	rebuildTagChainForEntity ('rack', $rack_id, buildTagChainFromIds ($taglist), TRUE);
