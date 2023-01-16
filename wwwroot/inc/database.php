@@ -21,6 +21,8 @@ $SQLSchema = array
 			'name' => 'name',
 			'label' => 'label',
 			'asset_no' => 'asset_no',
+			'serial_no' => 'serial_no',
+			'ci_id' => 'ci_id',
 			'objtype_id' => 'objtype_id',
 			'rack_id' => '(SELECT MIN(rack_id) FROM RackSpace WHERE object_id = RackObject.id)',
 			'rack_id_2' => "(SELECT MIN(parent_entity_id) FROM EntityLink WHERE child_entity_type='object' AND child_entity_id = RackObject.id AND parent_entity_type = 'rack')",
@@ -948,7 +950,7 @@ function checkObjectNameUniqueness ($name, $type_id, $object_id = 0)
 		throw new InvalidRequestArgException ('name', $name, 'An object with that name already exists');
 }
 
-function commitAddObject ($new_name, $new_label, $new_type_id, $new_asset_no, $taglist = array())
+function commitAddObject ($new_name, $new_label, $new_type_id, $new_asset_no, $new_serial_no, $new_ci_id $taglist = array())
 {
 	checkObjectNameUniqueness ($new_name, $new_type_id);
 	usePreparedInsertBlade
@@ -960,6 +962,8 @@ function commitAddObject ($new_name, $new_label, $new_type_id, $new_asset_no, $t
 			'label' => nullIfEmptyStr ($new_label),
 			'objtype_id' => $new_type_id,
 			'asset_no' => nullIfEmptyStr ($new_asset_no),
+			'serial_no' => nullIfEmptyStr ($new_serial_no),
+			'ci_id' => nullIfEmptyStr ($new_ci_id),
 		)
 	);
 	$object_id = lastInsertID();
@@ -1007,7 +1011,7 @@ function commitRenameObject ($object_id, $new_name)
 	recordObjectHistory ($object_id);
 }
 
-function commitUpdateObject ($object_id, $new_name, $new_label, $new_has_problems, $new_asset_no, $new_comment)
+function commitUpdateObject ($object_id, $new_name, $new_label, $new_has_problems, $new_asset_no, $new_serial_no, $new_ci_id, $new_comment)
 {
 	$set_columns = array
 	(
@@ -1015,6 +1019,8 @@ function commitUpdateObject ($object_id, $new_name, $new_label, $new_has_problem
 		'label' => nullIfEmptyStr ($new_label),
 		'has_problems' => $new_has_problems == '' ? 'no' : $new_has_problems,
 		'asset_no' => nullIfEmptyStr ($new_asset_no),
+		'serial_no' => nullIfEmptyStr ($new_serial_no),
+		'ci_id' => nullIfEmptyStr ($new_ci_id),
 		'comment' => nullIfEmptyStr ($new_comment),
 	);
 	$override = callHook('commitUpdateObjectBefore_hook', $object_id, $set_columns);
